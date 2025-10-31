@@ -25,7 +25,7 @@ jobs:
           git config user.name "kvivekkannan"
           git config user.email "kviveknishanth@gmail.com"
 
-      - name: Copy files from ParentRepo to ChildRepo
+      - name: Copy files from ParentRepo to ChildRepo 
         run: |
           rsync -av --exclude='.git' ./ ./childrepo/
           cd childrepo
