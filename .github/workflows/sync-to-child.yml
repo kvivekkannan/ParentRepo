@@ -1,0 +1,44 @@
+name: Sync Parent → Child
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-to-child:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ParentRepo
+        uses: actions/checkout@v4
+        with:
+          # we only need the latest commit
+          fetch-depth: 1
+
+      - name: Configure Git for push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Clone ChildRepo sync branch
+        env:
+          CHILD_REPO_SECRET: ${{ secrets.CHILD_REPO_SECRET }}
+        run: |
+          git clone https://x-access-token:${CHILD_REPO_SECRZET}@github.com/kvivekkannan/ChildRepo.git childrepo
+          cd childrepo
+          git checkout sync-branch || git checkout -b sync-branch
+
+      - name: Copy files from ParentRepo to ChildRepo
+        run: |
+          cd childrepo
+          git rm -r * || true
+          # copy everything from parent workspace to childrepo directory, exclude .git
+          rsync -av --exclude='.git' ../ ./
+          git add .
+          # only commit if there is something to commit
+          if ! git diff --cached --quiet; then
+            git commit -m "Sync from ParentRepo main at ${{ github.sha }}"
+            git push origin sync-branch
+          else
+            echo "No changes to sync"
+          fi
