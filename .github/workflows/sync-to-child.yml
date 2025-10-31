@@ -31,7 +31,7 @@ jobs:
           cd childrepo
           git add .
           if ! git diff --cached --quiet; then
-            git commit -m "Sync from ParentRepo main at ${{ github.sha }}"
+            git commit -m "Sync from ParentRepo main at ${{ github.sha }}" 
             git push origin sync-branch
           else
             echo "No changes to sync"
