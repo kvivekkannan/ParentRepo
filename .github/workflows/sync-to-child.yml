@@ -24,7 +24,7 @@ jobs:
         env:
           CHILD_REPO_SECRET: ${{ secrets.CHILD_REPO_SECRET }}
         run: |
-          git clone https://x-access-token:${CHILD_REPO_SECRZET}@github.com/kvivekkannan/ChildRepo.git childrepo
+          git clone https://x-access-token:${CHILD_REPO_SECRET}@github.com/kvivekkannan/ChildRepo.git childrepo
           cd childrepo
           git checkout sync-branch || git checkout -b sync-branch
 
